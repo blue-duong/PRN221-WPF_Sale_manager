@@ -7,7 +7,37 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="AdminManager.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="AdminMember.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="AdminMemberCreate.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="AdminOrder.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="AdminProduct.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="AdminProductCreate.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CartWindown.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Home.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MyOrderWindown.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="StyleResource.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
