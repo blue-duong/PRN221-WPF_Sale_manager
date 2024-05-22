@@ -5,24 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SaleWPFApp"
         mc:Ignorable="d"
-        Title="Login" Height="450" Width="800">
+        Title="Login" Height="450" Width="350"
+        WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <ResourceDictionary Source="StyleResource.xaml"></ResourceDictionary>
     </Window.Resources>
-    <Grid>
-        <StackPanel Background="white" HorizontalAlignment="Center" VerticalAlignment="Center" Width="auto" Margin="0 0 0 30">
-            <Image Source="Resource/logo/logo.png" Height="55" Width="278" Margin="0 10"></Image>
-            <TextBlock Style="{StaticResource ResourceKey=headingPrimary}" HorizontalAlignment="Center">
+    <Grid Background="#f0f0f0">
+        <Border Background="White" CornerRadius="10" Padding="20" Width="300" HorizontalAlignment="Center" VerticalAlignment="Center" Effect="{StaticResource dropShadowEffect}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Image Source="pack://application:,,,/Resource/logo/logo.png" Height="55" Width="278" Margin="0 10"/>
+                <TextBlock Style="{StaticResource ResourceKey=headingPrimary}" HorizontalAlignment="Center" Margin="0 10 0 5">
                     FStore
-            </TextBlock>
-            <TextBlock Style="{StaticResource ResourceKey=spanPrimary}" HorizontalAlignment="Center" Margin="0 0 0 10">
-                    Welcome to FStore FPT University
-            </TextBlock>
-            <Label Content="Username" Style="{StaticResource ResourceKey=labelPrimary}"/>
-            <TextBox x:Name="txtBoxUsername" Margin="0 0 0 5" Style="{StaticResource ResourceKey=texboxPrimary}"/>
-            <Label Content="Password" Style="{StaticResource ResourceKey=labelPrimary}"/>
-            <PasswordBox x:Name="pwdBoxPassword" Margin="0 0 0 20" Style="{StaticResource ResourceKey=passwordBoxPrimary}"/>
-            <Button Content="Login" Style="{StaticResource ResourceKey=btnPrimary}" Width="100" Click="Btn_login"></Button>
-        </StackPanel>
+                </TextBlock>
+                <TextBlock Style="{StaticResource ResourceKey=spanPrimary}" HorizontalAlignment="Center" Margin="0 0 0 20">
+                    Welcome to FStore
+                </TextBlock>
+                <Label Content="Username" Style="{StaticResource ResourceKey=labelPrimary}" Margin="0 5"/>
+                <TextBox x:Name="txtBoxUsername" Style="{StaticResource ResourceKey=texboxPrimary}" Width="250" Margin="0 0 0 10"/>
+                <Label Content="Password" Style="{StaticResource ResourceKey=labelPrimary}" Margin="0 5"/>
+                <PasswordBox x:Name="pwdBoxPassword" Style="{StaticResource ResourceKey=passwordBoxPrimary}" Width="250" Margin="0 0 0 20"/>
+                <Button Content="Login" Style="{StaticResource ResourceKey=btnPrimary}" Width="100" Click="Btn_login"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>
