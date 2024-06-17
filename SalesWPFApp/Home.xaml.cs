@@ -26,7 +26,8 @@ namespace SaleWPFApp
         private readonly IOrderRepository orderRepository;
         private readonly IMemberRepository memberRepository;
         private readonly MainWindow mainWindow;
-        public Home(MainWindow _mainWindow, IProductRepository _productRepository, IOrderRepository _orderRepository, IMemberRepository _memberRepository)
+        private Member _member;
+        public Home(Member member, MainWindow _mainWindow, IProductRepository _productRepository, IOrderRepository _orderRepository, IMemberRepository _memberRepository)
         {
             InitializeComponent();
             Closing += Home_Closing;
@@ -34,6 +35,7 @@ namespace SaleWPFApp
             this.productRepository = _productRepository;
             this.orderRepository = _orderRepository;
             this.memberRepository = _memberRepository;
+            _member = member;
             ListProduct.ItemsSource = productRepository.List();
             Session.carts = new List<OrderDetail>();
             UpdateCartQuantity();
@@ -95,7 +97,18 @@ namespace SaleWPFApp
             }
             UpdateCartQuantity();
         }
+        private void Button_OpenUserProfile(object sender, RoutedEventArgs e)
+        {
+            var profileWindow = new Window
+            {
+                Title = "User Profile",
+                Content = new UserProfile(_member),
+                SizeToContent = SizeToContent.WidthAndHeight,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen
+            };
 
+            profileWindow.ShowDialog();
+        }
         private void Button_OpenOrder(object sender, RoutedEventArgs e)
         {
             CartWindown cartWindown = new CartWindown(this, orderRepository, memberRepository);

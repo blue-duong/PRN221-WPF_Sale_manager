@@ -12,10 +12,14 @@ namespace DataAccess.Repository
     {
         IEnumerable<Order> List();
         IEnumerable<Order> FindAllBy(OrderFilter filter);
+        IEnumerable<OrderDetail> GetOrderDetailsByOrderId(int orderId);
         void Add(Order order);
         void Update(Order order);
         void Remove(Order order);
+        decimal GetOrderTotal(int orderId);
         Order FindById(int id);
+        void RemoveOrderDetail(OrderDetail orderDetail);
+        void AddOrderDetail(OrderDetail orderDetail);
         IEnumerable<Order> FindByEmail(string email);
         IEnumerable<Order> FindAllByStartTimeAndEndTime(DateTime start,DateTime end);
 

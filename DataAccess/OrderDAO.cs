@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-
 namespace DataAccess
 {
     public class OrderDAO
@@ -14,6 +13,7 @@ namespace DataAccess
         private static readonly object instanceLock = new object();
 
         private OrderDAO() { }
+
         public static OrderDAO Instance
         {
             get
@@ -26,75 +26,86 @@ namespace DataAccess
                     }
                     return instance;
                 }
-
             }
         }
 
         public IEnumerable<Order> List()
         {
-            List<Order> orders = new List<Order>();
             try
             {
-                using (var SaleManagerContext = new SaleManagerContext())
+                using (var context = new SaleManagerContext())
                 {
-                    orders = SaleManagerContext.Orders.ToList().OrderByDescending(order => order.OrderId).ToList();
+                    return context.Orders.OrderByDescending(order => order.OrderId).ToList();
                 }
             }
             catch (Exception e)
             {
                 throw new Exception(e.Message);
             }
-
-            return orders;
         }
-
 
         public Order FindOne(Expression<Func<Order, bool>> predicate)
         {
-            Order order = null;
             try
             {
-                using (var saleManagerContext = new SaleManagerContext())
+                using (var context = new SaleManagerContext())
                 {
-                    order = saleManagerContext.Orders.SingleOrDefault(predicate);
+                    return context.Orders.SingleOrDefault(predicate);
                 }
             }
             catch (Exception e)
             {
                 throw new Exception(e.Message);
             }
-            return order;
+        }
+        public Order FindById(int orderId)
+        {
+            using (var context = new SaleManagerContext())
+            {
+                return context.Orders.Include(o => o.OrderDetails).FirstOrDefault(o => o.OrderId == orderId);
+            }
         }
 
         public IEnumerable<Order> FindAll(Expression<Func<Order, bool>> predicate)
         {
-            List<Order> orders = new List<Order>();
-            using (var saleManagerContext = new SaleManagerContext())
+            try
             {
-                orders = saleManagerContext.Orders.Where(predicate).ToList();
+                using (var context = new SaleManagerContext())
+                {
+                    return context.Orders.Where(predicate).ToList();
+                }
             }
-            return orders;
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
         }
+
+        public IEnumerable<OrderDetail> GetOrderDetailsByOrderId(int orderId)
+        {
+            try
+            {
+                using (var context = new SaleManagerContext())
+                {
+                    return context.OrderDetails.Where(od => od.OrderId == orderId).ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
 
         public void Add(Order order)
         {
             try
             {
-                Order p = FindOne(item => item.OrderId.Equals(order.OrderId));
-                if (p == null)
+                using (var context = new SaleManagerContext())
                 {
-                    using (var saleManagement = new SaleManagerContext())
-                    {
-                        saleManagement.Orders.Add(order);
-                        saleManagement.SaveChanges();
-                    }
-
+                    context.Orders.Add(order);
+                    context.SaveChanges();
                 }
-                else
-                {
-                    throw new Exception("The order is already exist");
-                }
-
             }
             catch (Exception e)
             {
@@ -106,18 +117,10 @@ namespace DataAccess
         {
             try
             {
-                Order p = FindOne(item => item.OrderId.Equals(order.OrderId));
-                if (p != null)
+                using (var context = new SaleManagerContext())
                 {
-                    using (var saleManagerContext = new SaleManagerContext())
-                    {
-                        saleManagerContext.Orders.Remove(order);
-                        saleManagerContext.SaveChanges();
-                    }
-                }
-                else
-                {
-                    throw new Exception("The order does not exist");
+                    context.Orders.Remove(order);
+                    context.SaveChanges();
                 }
             }
             catch (Exception e)
@@ -130,18 +133,49 @@ namespace DataAccess
         {
             try
             {
-                Order p = FindOne(item => item.OrderId.Equals(order.OrderId));
-                if (p != null)
+                using (var context = new SaleManagerContext())
                 {
-                    using (var saleManager = new SaleManagerContext())
+                    // Đính kèm thực thể Order vào ngữ cảnh
+                    context.Orders.Attach(order);
+
+                    // Đánh dấu thực thể đã được sửa đổi
+                    context.Entry(order).State = EntityState.Modified;
+
+                    // Đánh dấu các chi tiết đơn hàng là đã thêm mới
+                    foreach (var orderDetail in order.OrderDetails)
                     {
-                        saleManager.Entry<Order>(order).State = EntityState.Modified;
-                        saleManager.SaveChanges();
+                        context.Entry(orderDetail).State = EntityState.Added;
                     }
-                }
-                else
-                {
-                    throw new Exception("The order does not exist");
+
+                    // Save changes with optimistic concurrency handling
+                    bool saveFailed;
+                    do
+                    {
+                        saveFailed = false;
+                        try
+                        {
+                            context.SaveChanges();
+                        }
+                        catch (DbUpdateConcurrencyException ex)
+                        {
+                            saveFailed = true;
+
+                            // Get the current entity values and the values in the database
+                            var entry = ex.Entries.Single();
+                            var clientValues = entry.CurrentValues;
+                            var databaseEntry = entry.GetDatabaseValues();
+
+                            if (databaseEntry == null)
+                            {
+                                throw new Exception("The order was deleted by another user.");
+                            }
+
+                            var databaseValues = databaseEntry.ToObject();
+
+                            // Refresh the original values to bypass the concurrency issue
+                            entry.OriginalValues.SetValues(databaseEntry);
+                        }
+                    } while (saveFailed);
                 }
             }
             catch (Exception e)
@@ -149,5 +183,30 @@ namespace DataAccess
                 throw new Exception(e.Message);
             }
         }
+        public void RemoveOrderDetail(OrderDetail orderDetail)
+        {
+            try
+            {
+                using (var context = new SaleManagerContext())
+                {
+                    context.OrderDetails.Remove(orderDetail);
+                    context.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+        public decimal GetOrderTotal(int orderId)
+        {
+            using (var context = new SaleManagerContext())
+            {
+                return context.OrderDetails
+                    .Where(od => od.OrderId == orderId)
+                    .Sum(od => od.UnitPrice * od.Quantity);
+            }
+        }
+
     }
 }

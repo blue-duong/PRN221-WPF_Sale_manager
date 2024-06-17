@@ -1,0 +1,23 @@
+﻿<Window x:Class="SaleWPFApp.AddOrderWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add/Edit Order" Height="300" Width="400">
+    <Window.Resources>
+        <ResourceDictionary Source="StyleResource.xaml"></ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <StackPanel>
+            <Label Content="Member"/>
+            <ComboBox Name="MemberComboBox" DisplayMemberPath="Email" SelectedValuePath="MemberId"/>
+            <Label Content="Order Date"/>
+            <DatePicker Name="OrderDatePicker"/>
+            <Label Content="Required Date"/>
+            <DatePicker Name="RequiredDatePicker"/>
+            <Label Content="Shipped Date"/>
+            <DatePicker Name="ShippedDatePicker"/>
+            <Label Content="Freight"/>
+            <TextBox Name="FreightTextBox"/>
+            <Button Name="ActionButton" Content="Add" Click="Button_Save"/>
+        </StackPanel>
+    </Grid>
+</Window>

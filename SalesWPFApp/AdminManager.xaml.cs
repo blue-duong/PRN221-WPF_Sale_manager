@@ -28,23 +28,21 @@ namespace SaleWPFApp
             mainWindow.Show();
         }
 
-        private void Goto_AdminProduct(object sender, MouseButtonEventArgs e)
+        private void Goto_AdminProduct(object sender, RoutedEventArgs e)
         {
-            logo.Visibility = Visibility.Hidden;
             AdminProduct adminProduct = new AdminProduct(productRepository);
             frameMain.Content = adminProduct;
         }
 
-        private void Goto_AdminMember(object sender, MouseButtonEventArgs e)
+        private void Goto_AdminMember(object sender, RoutedEventArgs e)
         {
-            logo.Visibility = Visibility.Hidden;
             AdminMember adminMember = new AdminMember(memberRepository);
             frameMain.Content = adminMember;
         }
-        private void Goto_AdminOrder(object sender, MouseButtonEventArgs e)
+
+        private void Goto_AdminOrder(object sender, RoutedEventArgs e)
         {
-            logo.Visibility = Visibility.Hidden;
-            AdminOrder adminOrder = new AdminOrder(orderRepository);
+            AdminOrder adminOrder = new AdminOrder(orderRepository, productRepository, memberRepository); // Truyền cả ba tham số ở đây
             frameMain.Content = adminOrder;
         }
 

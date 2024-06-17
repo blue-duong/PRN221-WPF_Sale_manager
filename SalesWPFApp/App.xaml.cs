@@ -1,4 +1,5 @@
-﻿using DataAccess.Repository;
+﻿using BusinessObject.Model;
+using DataAccess.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,7 @@ namespace SaleWPFApp
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IMemberRepository, MemberRepository>();
+            services.AddScoped<SaleManagerContext>();
         }
 
         private void OnStartup(object sender, StartupEventArgs e)
